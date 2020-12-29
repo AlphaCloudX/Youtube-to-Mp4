@@ -93,5 +93,6 @@ base = YouTube(link).title
 final = str(base) + ".mp4"
 
 # Audio Combination
-combine_audio("./Video/" + final, "./Audio/" + final, "./downloads/final.mp4", fps=60)
+# Fps can be any value but doesn't matter too much as youtube mainly outputs in 30fps
+combine_audio("./Video/" + final, "./Audio/" + final, "./downloads/final.mp4", fps=30)
 print("Done")
