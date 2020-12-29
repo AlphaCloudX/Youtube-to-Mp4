@@ -1,5 +1,6 @@
 import os
 from pytube import YouTube
+from moviepy.editor import *
 
 
 def bestQuality(yt):
@@ -43,21 +44,54 @@ def bestQuality(yt):
 
 link = str(input("What is the URL?"))
 
-#gettting yt video Options
+# gettting yt video Options
 options = bestQuality(YouTube(link))
 
 for i in range(len(options)):
-    print(str(i+1) + ". " + str(options[i].resolution))
+    print(str(i + 1) + ". " + str(options[i].resolution))
 
-#requesting video choice
+# requesting video choice
 streamDownload = int(input("Which video quality would you like to download?"))
 
-#getting directory
+# getting directory
 path = os.getcwd()
-savingPath = str(path) + "\downloads"
+savingPathVideo = str(path) + "\Video"
+savingPathAudio = str(path) + "\Audio"
 
-print("Downloading Option " + str(streamDownload) + ". " + str(options[streamDownload-1].resolution))
-print("Saving in Path: " + savingPath)
+print("Downloading Option " + str(streamDownload) + ". " + str(options[streamDownload - 1].resolution))
+print("Saving Video in Path: " + savingPathVideo)
 
-options[streamDownload-1].download(savingPath)
-print("Finished Downloading")
+options[streamDownload - 1].download(savingPathVideo)
+print("Finished Downloading Video")
+
+# Not in The Video Just adding Audio To Video
+# ----------------------
+# Downloading Audio
+# --------------------
+# Combining Audio With Video
+def combine_audio(videoDirectory, audioDirectory, outputDirectory, fps=30):
+    # mp4 to mp3
+    clip = AudioFileClip(audioDirectory)
+    clip.write_audiofile('./Audio/file.mp3')
+    clip.close()
+
+    # Mixing
+    my_clip = VideoFileClip(videoDirectory)
+    audio_background = AudioFileClip('./Audio/file.mp3')
+    final_clip = my_clip.set_audio(audio_background)
+    final_clip.write_videofile(outputDirectory, fps=fps)
+
+    final_clip.close()
+
+# Save path and download of audio
+print("Saving Audio in Path: " + savingPathAudio)
+YouTube(link).streams.get_by_itag(140).download(savingPathAudio)
+print("Finished Downloading Audio")
+
+# File Locations
+base = YouTube(link).title
+final = str(base) + ".mp4"
+
+# Audio Combination
+combine_audio("./Video/" + final, "./Audio/" + final, "./downloads/final.mp4", fps=60)
+print("Done")
